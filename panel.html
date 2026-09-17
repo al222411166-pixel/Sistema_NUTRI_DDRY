@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema NUTRI DRRY - Panel Clínico</title>
+  <meta name="description"
+    content="Panel de administración clínica, cálculo de IMC dinámico, gestión de pacientes y consultas nutricionales">
+  <link rel="stylesheet" href="css/panel.css">
+  <script>
+    // Bloqueo inmediato al intentar acceder al panel sin login
+    (function () {
+      var session = localStorage.getItem('nutrix_current_user') || sessionStorage.getItem('nutrix_current_user');
+      if (!session) {
+        window.location.replace('index.html');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+
+  <!-- Barra Superior de Navegación -->
+  <header class="navbar">
+    <div class="brand-section">
+      <h1 class="brand-name">Sistema <span>NUTRI DRRY</span></h1>
+    </div>
+
+    <div class="user-nav-controls">
+      <!-- Indicador personalizado de la sesión -->
+      <div class="session-badge">
+        <span>Sesión:</span>
+        <span id="sessionUserName" class="session-user-name">CARGANDO...</span>
+      </div>
+
+      <!-- Botón utilitario para reiniciar o borrar datos -->
+      <button type="button" id="btnClearAll" class="btn-danger-nav" title="Restablecer datos">
+        <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd"
+            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+            clip-rule="evenodd" />
+        </svg>
+        Borrar todos los datos
+      </button>
+
+      <!-- Botón de Cerrar Sesión -->
+      <button type="button" id="btnLogout" class="btn-logout" title="Cerrar sesión y salir">
+        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal del Panel -->
+  <main class="main-wrapper">
+    <div class="dashboard-grid">
+
+      <!-- COLUMNA IZQUIERDA: REGISTRAR PACIENTE -->
+      <section class="clinic-card">
+        <div class="card-header-clean">
+          <h2 class="card-title-serif">Registrar Paciente</h2>
+        </div>
+        <div class="card-body">
+          <form id="formRegisterPatient" autocomplete="off">
+            <div class="field-group">
+              <label for="patientName" class="field-label">NOMBRE COMPLETO</label>
+              <input type="text" id="patientName" class="field-input" placeholder="Ej. Rolando Yhair" required>
+            </div>
+
+            <div class="form-row-2">
+              <div class="field-group">
+                <label for="patientAge" class="field-label">EDAD</label>
+                <input type="number" id="patientAge" class="field-input" placeholder="52" min="1" max="120" required>
+              </div>
+
+              <div class="field-group">
+                <label for="patientGender" class="field-label">SEXO</label>
+                <select id="patientGender" class="field-select" required>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="field-group">
+                <label for="patientWeight" class="field-label">PESO (KG)</label>
+                <input type="number" id="patientWeight" class="field-input" placeholder="70" step="0.1" min="5"
+                  max="300" required>
+              </div>
+
+              <div class="field-group">
+                <label for="patientHeight" class="field-label">ALTURA (M)</label>
+                <input type="number" id="patientHeight" class="field-input" placeholder="1.65" step="0.01" min="0.5"
+                  max="2.50" required>
+              </div>
+            </div>
+
+            <!-- Recuadro donde aparece el cálculo dinámico del IMC y su estado -->
+            <div class="imc-result-box" id="imcResultContainer">
+              <div>
+                <span class="imc-display-label">IMC calculado:</span>
+                <span id="calculatedIMCNumber" class="imc-display-number">--</span>
+              </div>
+              <span id="calculatedIMCBadge" class="imc-badge-status sin-calcular">SIN CALCULAR</span>
+            </div>
+
+            <button type="submit" id="btnSavePatient" class="btn-action-primary">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Guardar Paciente
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- COLUMNA DERECHA: NUEVA CONSULTA E HISTORIAL -->
+      <div class="right-column-stack">
+
+        <!-- VENTANA : INFORMACIÓN PACIENTE / NUEVA CONSULTA -->
+        <section class="clinic-card">
+          <div class="card-header-clean">
+            <h2 class="card-title-serif">Nueva Consulta</h2>
+          </div>
+          <div class="card-body">
+            <form id="formNewConsultation" autocomplete="off">
+              <div class="field-group">
+                <label for="consultationPatientSelect" class="field-label">PACIENTE</label>
+                <select id="consultationPatientSelect" class="field-select" required>
+                  <option value="">-- Selecciona un paciente --</option>
+                </select>
+              </div>
+
+              <!-- Resumen clínico -->
+              <div id="selectedPatientSummary" class="patient-info-pills">
+                <span style="font-size:0.85rem; color:#94a3b8; font-style:italic;">
+                  Selecciona un paciente para ver sus datos clínicos
+                </span>
+              </div>
+
+              <div class="form-row-2">
+                <div class="field-group">
+                  <label for="consultationDate" class="field-label">FECHA</label>
+                  <input type="date" id="consultationDate" class="field-input" required>
+                </div>
+
+                <div class="field-group">
+                  <label for="consultationTime" class="field-label">HORA</label>
+                  <input type="time" id="consultationTime" class="field-input" required>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="consultationEvolution" class="field-label">EVOLUCIÓN DEL PACIENTE</label>
+                <textarea id="consultationEvolution" class="field-textarea"
+                  placeholder="Describe los cambios observados desde la última consulta..."></textarea>
+              </div>
+
+              <div class="field-group">
+                <label for="consultationPlan" class="field-label">PLAN DE ALIMENTACIÓN</label>
+                <textarea id="consultationPlan" class="field-textarea"
+                  placeholder="Describe el plan nutricional para este período..."></textarea>
+              </div>
+
+              <button type="submit" id="btnSaveConsultation" class="btn-action-primary">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Guardar Consulta
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- VENTANA : HISTORIAL DE CONSULTAS -->
+        <section class="clinic-card">
+          <div class="card-header-clean" style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 class="card-title-serif">Historial de Consultas</h2>
+            <span id="historyCount" class="history-count">Total: 0 registro(s)</span>
+          </div>
+          <div class="card-body">
+            <div class="history-controls">
+              <label for="historyFilterSelect" style="font-size:0.85rem; font-weight:600; color:#64748b;">
+                Filtrar por paciente:
+              </label>
+              <select id="historyFilterSelect" class="history-filter-select">
+                <option value="all">Todos los pacientes</option>
+              </select>
+            </div>
+
+            <!-- Lista interactiva de consultas -->
+            <div id="consultationHistoryList" class="history-list">
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="js/panel.js"></script>
+</body>
+
+</html>

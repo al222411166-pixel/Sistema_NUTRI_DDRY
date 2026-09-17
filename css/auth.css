@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+
+:root {
+  --primary-dark: #064e3b;
+  --primary: #047857;
+  --primary-light: #10b981;
+  --primary-bg: #ecfdf5;
+  --accent: #15803d;
+  --accent-hover: #166534;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --bg-gradient-start: #064e3b;
+  --bg-gradient-end: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.98);
+  --border-color: #e5e7eb;
+  --focus-ring: rgba(16, 185, 129, 0.25);
+  --danger: #dc2626;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --shadow-card: 0 20px 45px -10px rgba(0, 0, 0, 0.25), 0 10px 20px -10px rgba(0, 0, 0, 0.15);
+  --shadow-input: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top right, #047857 0%, #064e3b 40%, #09261e 100%);
+  padding: 20px;
+  color: var(--text-main);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Fondo decorativo */
+body::before {
+  content: "";
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+  top: -100px;
+  left: -100px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(5, 150, 105, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+  bottom: -80px;
+  right: -80px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Tarjeta principal */
+.auth-container {
+  width: 100%;
+  max-width: 440px;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 40px 36px;
+  position: relative;
+  z-index: 10;
+  animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Cabecera del formulario */
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-bg);
+  color: var(--primary-dark);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.auth-badge svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.auth-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  letter-spacing: -0.025em;
+  margin-bottom: 8px;
+}
+
+.auth-title span {
+  color: var(--primary-light);
+}
+
+.auth-subtitle {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Campos de formulario */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 7px;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  width: 20px;
+  height: 20px;
+  color: #9ca3af;
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  background-color: #f9fafb;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  outline: none;
+  box-shadow: var(--shadow-input);
+  transition: all 0.25s ease;
+}
+
+.form-input:focus {
+  background-color: #ffffff;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.form-input:focus+.input-icon,
+.input-wrapper:focus-within .input-icon {
+  color: var(--primary);
+}
+
+/* Mensajes de alerta */
+.alert-box {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.alert-box.error {
+  display: block;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.alert-box.success {
+  display: block;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botón principal */
+.btn-submit {
+  width: 100%;
+  padding: 13px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(4, 120, 87, 0.35);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-submit:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--accent-hover) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(4, 120, 87, 0.45);
+}
+
+.btn-submit:active {
+  transform: translateY(1px);
+}
+
+/* Enlaces y pie */
+.auth-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.auth-link {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 5px;
+  transition: color 0.2s;
+}
+
+.auth-link:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+.demo-credentials {
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  color: #475569;
+  text-align: center;
+}
+
+.demo-credentials strong {
+  color: var(--primary-dark);
+}
